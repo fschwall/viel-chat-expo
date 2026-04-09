@@ -7,10 +7,20 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "eslint .",
+    "doctor": "npx expo-doctor",
+    "typecheck": "tsc --noEmit",
+    "build:ios:preview": "npx eas-cli build --platform ios --profile preview",
+    "build:android:preview": "npx eas-cli build --platform android --profile preview",
+    "build:ios:production": "npx eas-cli build --platform ios --profile production",
+    "build:android:production": "npx eas-cli build --platform android --profile production",
+    "submit:ios:production": "npx eas-cli submit --platform ios --profile production",
+    "submit:android:production": "npx eas-cli submit --platform android --profile production"
   },
   "dependencies": {
     "expo": "~54.0.33",
+    "expo-constants": "~18.0.13",
+    "expo-linking": "~8.0.11",
     "expo-router": "~6.0.23",
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
