@@ -7,14 +7,15 @@ const iosBuildNumber = process.env.IOS_BUILD_NUMBER ?? '1';
 const androidVersionCode = Number.parseInt(process.env.ANDROID_VERSION_CODE ?? '1', 10);
 const bundleIdentifier = process.env.EXPO_IOS_BUNDLE_IDENTIFIER ?? 'com.fschwall.vielchat';
 const androidPackage = process.env.EXPO_ANDROID_PACKAGE ?? 'com.fschwall.vielchat';
+const productionUrl = 'https://www.viel.chat/chat';
 
 const getDefaultUrl = () => {
   if (appEnv === 'production') {
-    return 'https://www.viel.chat';
+    return productionUrl;
   }
 
   if (appEnv === 'preview') {
-    return 'https://www.viel.chat';
+    return productionUrl;
   }
 
   return process.env.EXPO_PUBLIC_VIEL_CHAT_URL;

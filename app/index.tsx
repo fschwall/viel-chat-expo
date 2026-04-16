@@ -12,16 +12,36 @@ type ExtraConfig = {
 };
 
 const extra = (Constants.expoConfig?.extra ?? {}) as ExtraConfig;
+const PRODUCTION_HOST = 'www.viel.chat';
+const PRODUCTION_URL = `https://${PRODUCTION_HOST}/chat`;
 
 const DEFAULT_URL =
   Platform.OS === 'android'
     ? 'http://10.0.2.2:3000'
     : Platform.OS === 'ios'
       ? 'http://localhost:3000'
-      : 'https://www.viel.chat';
+      : PRODUCTION_URL;
 const VIEL_CHAT_URL = extra.vielChatUrl ?? process.env.EXPO_PUBLIC_VIEL_CHAT_URL ?? DEFAULT_URL;
-const PRIMARY_HOST = new URL(VIEL_CHAT_URL).host;
+const APP_ENV = extra.appEnv ?? 'development';
+const IS_PRODUCTION = APP_ENV === 'production';
+const ALLOWED_EXTERNAL_PROTOCOLS = new Set(['mailto:', 'tel:']);
+
+const getUrl = (url: string) => {
+  try {
+    return new URL(url);
+  } catch {
+    return null;
+  }
+};
+
+const PRIMARY_URL = getUrl(VIEL_CHAT_URL);
+const PRIMARY_HOST = PRIMARY_URL?.host ?? PRODUCTION_HOST;
 const ALLOWED_HOSTS = new Set([PRIMARY_HOST, ...(extra.vielChatAllowedHosts ?? [])]);
+
+const isLocalDevelopmentUrl = (url: URL) =>
+  !IS_PRODUCTION &&
+  url.protocol === 'http:' &&
+  ['localhost', '127.0.0.1', '10.0.2.2'].includes(url.hostname);
 
 const openExternalUrl = async (url: string) => {
   try {
@@ -39,21 +59,27 @@ export default function HomeScreen() {
       return false;
     }
 
-    const nextUrl = new URL(request.url);
+    const nextUrl = getUrl(request.url);
+
+    if (!nextUrl) {
+      return false;
+    }
+
     const isAllowedHost = ALLOWED_HOSTS.has(nextUrl.host);
     const isHttpUrl = nextUrl.protocol === 'http:' || nextUrl.protocol === 'https:';
+    const canLoadInApp = nextUrl.protocol === 'https:' || isLocalDevelopmentUrl(nextUrl);
     const isInitialDocument = request.url === VIEL_CHAT_URL || request.isTopFrame;
 
-    if (isHttpUrl && isAllowedHost) {
+    if (isHttpUrl && isAllowedHost && canLoadInApp) {
       return true;
     }
 
-    if (isHttpUrl && isInitialDocument) {
+    if (isHttpUrl && isInitialDocument && nextUrl.protocol === 'https:') {
       void openExternalUrl(request.url);
       return false;
     }
 
-    if (!isHttpUrl) {
+    if (ALLOWED_EXTERNAL_PROTOCOLS.has(nextUrl.protocol)) {
       void openExternalUrl(request.url);
       return false;
     }

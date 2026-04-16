@@ -40,6 +40,7 @@ cp .env.example .env
 
 - `APP_ENV=development|preview|production`
 - `EXPO_PUBLIC_VIEL_CHAT_URL` for local development
+- `EXPO_PUBLIC_VIEL_CHAT_ALLOWED_HOSTS` for extra WebView hostnames, without `https://` or paths
 - `EXPO_IOS_BUNDLE_IDENTIFIER` for App Store builds
 - `EXPO_ANDROID_PACKAGE` for Play Store builds
 - `IOS_BUILD_NUMBER` and `ANDROID_VERSION_CODE` for release versioning
@@ -132,8 +133,8 @@ Replace the defaults in `app.config.ts` and `.env` if your real production setup
 
 - iOS bundle identifier: `com.fschwall.vielchat`
 - Android package: `com.fschwall.vielchat`
-- Production web URL: `https://www.viel.chat`
-- Preview web URL: `https://www.viel.chat`
+- Production web URL: `https://www.viel.chat/chat`
+- Preview web URL: `https://www.viel.chat/chat`
 
 If those domains are not your real deployed URLs, update them before shipping. Right now they are project assumptions, not verified deployment values.
 
