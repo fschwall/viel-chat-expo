@@ -1,14 +1,21 @@
 # Viel Chat Store Assets Checklist
 
+This file tracks visual and copy assets. For the full launch plan, privacy answers,
+and review risks, see:
+
+- `docs/production-launch-checklist.md`
+- `docs/store-privacy-data-safety.md`
+- `docs/store-review-risk-review.md`
+
 ## Core identity
 
 - [ ] Final app name: `Viel Chat`
 - [ ] Developer name exactly as it should appear in App Store and Play
-- [ ] Support email address
-- [ ] Support URL
-- [ ] Marketing URL
-- [ ] Privacy policy URL
-- [ ] Copyright / legal entity name
+- [x] Support email address: `contactus@viel.chat`
+- [x] Support URL: `https://www.viel.chat/contact`
+- [x] Marketing URL: `https://www.viel.chat/`
+- [x] Privacy policy URL: `https://www.viel.chat/privacy`
+- [x] Copyright / legal entity name: `Viel UK Limited`
 
 ## App metadata
 
@@ -61,8 +68,8 @@
 
 ## Compliance and release prep
 
-- [ ] Terms of service URL
-- [ ] Privacy policy published and reachable without login
+- [x] Terms of service URL: `https://www.viel.chat/terms`
+- [x] Privacy policy published and reachable without login
 - [ ] Test account credentials prepared for review, if login is required
 - [ ] Demo video or reviewer notes prepared for complex flows
 - [ ] Version number and build number finalized
