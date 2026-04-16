@@ -48,7 +48,7 @@ const config: ExpoConfig = {
     package: androidPackage,
     versionCode: Number.isNaN(androidVersionCode) ? 1 : androidVersionCode,
     adaptiveIcon: {
-      backgroundColor: '#E6F4FE',
+      backgroundColor: '#F8DDC4',
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
@@ -66,11 +66,11 @@ const config: ExpoConfig = {
       'expo-splash-screen',
       {
         image: './assets/images/splash-icon.png',
-        imageWidth: 200,
+        imageWidth: 220,
         resizeMode: 'contain',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#F8DDC4',
         dark: {
-          backgroundColor: '#000000',
+          backgroundColor: '#151515',
         },
       },
     ],
