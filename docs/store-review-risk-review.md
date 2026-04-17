@@ -70,7 +70,7 @@ This review is focused on the current Expo wrapper and the published Viel Chat w
 
 3. Bundle/package naming
 
-   `com.fschwall.vielchat` is set consistently for iOS and Android. Treat it as final once store records are created.
+   `chat.viel.app` is set consistently for iOS and Android through `.env`. Treat it as final once store records are created.
 
 ## Recommended Next Changes
 

@@ -54,8 +54,8 @@ APP_ENV=development
 APP_VERSION=1.0.0
 IOS_BUILD_NUMBER=1
 ANDROID_VERSION_CODE=1
-EXPO_IOS_BUNDLE_IDENTIFIER=com.fschwall.vielchat
-EXPO_ANDROID_PACKAGE=com.fschwall.vielchat
+EXPO_IOS_BUNDLE_IDENTIFIER=chat.viel.app
+EXPO_ANDROID_PACKAGE=chat.viel.app
 EXPO_PUBLIC_VIEL_CHAT_URL=http://localhost:3000
 EXPO_PUBLIC_VIEL_CHAT_ALLOWED_HOSTS=www.viel.chat
 ```
@@ -131,8 +131,8 @@ npm run doctor
 
 Replace the defaults in `app.config.ts` and `.env` if your real production setup differs:
 
-- iOS bundle identifier: `com.fschwall.vielchat`
-- Android package: `com.fschwall.vielchat`
+- iOS bundle identifier: `chat.viel.app`
+- Android package: `chat.viel.app`
 - Production web URL: `https://www.viel.chat/chat`
 - Preview web URL: `https://www.viel.chat/chat`
 

@@ -8,8 +8,8 @@ It assumes the native app mostly hosts the Viel Chat web app in `react-native-we
 ## Current App Facts
 
 - App name: `Viel Chat`
-- Apple bundle ID: `com.fschwall.vielchat`
-- Android package: `com.fschwall.vielchat`
+- Apple bundle ID: `chat.viel.app`
+- Android package: `chat.viel.app`
 - Production URL: `https://www.viel.chat/chat`
 - Marketing URL: `https://www.viel.chat/`
 - Privacy policy URL: `https://www.viel.chat/privacy`
@@ -27,8 +27,8 @@ It assumes the native app mostly hosts the Viel Chat web app in `react-native-we
 - [ ] D-U-N-S number received and Apple Developer Program organization enrollment completed.
 - [ ] Apple Developer account team name matches the intended public seller/developer name.
 - [ ] Google Play developer account created and verified.
-- [ ] Apple bundle ID created or confirmed as `com.fschwall.vielchat`.
-- [ ] Google Play app record created with package `com.fschwall.vielchat`.
+- [ ] Apple bundle ID created or confirmed as `chat.viel.app`.
+- [ ] Google Play app record created with package `chat.viel.app`.
 - [ ] Privacy policy, terms, support, and contact pages remain reachable without login.
 - [ ] Production web app at `https://www.viel.chat/chat` is stable, HTTPS-only, and mobile-friendly.
 - [ ] Dedicated review account created, tested, and documented for Apple/Google reviewers.
@@ -81,7 +81,7 @@ It assumes the native app mostly hosts the Viel Chat web app in `react-native-we
 
 ## Google Play Console
 
-- [ ] App created with package `com.fschwall.vielchat`.
+- [ ] App created with package `chat.viel.app`.
 - [ ] App access instructions and reviewer credentials completed.
 - [ ] Data Safety completed.
 - [ ] Content rating questionnaire completed.
