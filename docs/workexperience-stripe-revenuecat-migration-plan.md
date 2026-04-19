@@ -317,6 +317,31 @@ intermediate
 pro
 ```
 
+Tier ownership:
+
+```text
+free
+  -> No purchase.
+  -> Default tier when the user has no active paid entitlement.
+
+intermediate
+  -> Self-serve paid tier.
+  -> Purchasable on web through Stripe.
+  -> Purchasable on iOS/Android through RevenueCat.
+
+pro
+  -> Self-serve paid tier.
+  -> Purchasable on web through Stripe.
+  -> Purchasable on iOS/Android through RevenueCat.
+
+enterprise
+  -> Custom/manual tier.
+  -> Not a RevenueCat product initially.
+  -> Should be granted through admin/manual backend override or a custom sales process.
+```
+
+RevenueCat does not need products for every app tier. It should only represent the mobile self-serve paid tiers unless enterprise is intentionally sold publicly through the stores later.
+
 Optionally add a computed/cache table:
 
 ```text
@@ -350,6 +375,35 @@ workexperience_pro_monthly_android -> pro
 ```
 
 The exact RevenueCat product IDs should match the products configured in App Store Connect and Google Play Console.
+
+No product mapping is needed for `free`; it is the fallback when no active source exists.
+
+Do not map unknown product IDs to `enterprise`. Enterprise should be explicit so a misconfigured Stripe or RevenueCat product cannot accidentally grant the highest tier.
+
+Recommended initial product decision:
+
+```text
+Supported app tiers:
+  free
+  intermediate
+  pro
+  enterprise
+
+Self-serve paid tiers:
+  intermediate
+  pro
+
+RevenueCat purchasable tiers:
+  intermediate
+  pro
+
+Stripe purchasable tiers:
+  intermediate
+  pro
+
+Manual/custom tier:
+  enterprise
+```
 
 ## Effective Entitlement Resolver
 
@@ -389,6 +443,8 @@ iOS active + Stripe canceled = paid access from iOS
 Android active + Stripe active = paid access from highest tier
 All expired/canceled = free
 ```
+
+Enterprise should be included in the tier ordering, but it should come from an explicit admin/manual/custom source rather than an unknown provider product ID.
 
 ## Stripe Migration Tasks
 
@@ -1119,14 +1175,27 @@ WorkExperience:
 
 viel-chat-expo:
 
-- [ ] Create branch `feature/revenuecat-mobile`.
-- [ ] Confirm Expo builds/lint/typecheck pass before changes.
-- [ ] Confirm app package/bundle identifiers are final or close to final.
-- [ ] Confirm the app can point at the correct WorkExperience backend URL per environment.
+- [x] Create branch `feature/revenuecat-mobile`.
+- [x] Confirm Expo builds/lint/typecheck pass before changes.
+  - `npx expo export --platform all --output-dir /tmp/viel-chat-expo-stage0-export` passed for Android, iOS, and web bundles.
+  - `npm run lint` passed.
+  - `npm run typecheck` passed.
+  - `npm run doctor` passed after allowing network access for `npx expo-doctor`.
+- [x] Confirm app package/bundle identifiers are final or close to final.
+  - iOS bundle identifier: `chat.viel.app`.
+  - Android package: `chat.viel.app`.
+- [x] Confirm the app can point at the correct WorkExperience backend URL per environment.
+  - Current WebView URL configuration is present: development uses `EXPO_PUBLIC_VIEL_CHAT_URL`, and preview/production use `https://www.viel.chat/chat`.
+  - Dedicated WorkExperience tRPC/API URL configuration is present through `EXPO_PUBLIC_WORKEXPERIENCE_API_URL`.
+  - `app.config.ts` also exposes `workExperienceApiUrl` through Expo `extra`.
 
 Shared decision:
 
-- [ ] Decide tier names for RevenueCat: `intermediate`, `pro`, or one `premium` entitlement.
+- [x] Decide tier names for RevenueCat: `intermediate`, `pro`, or one `premium` entitlement.
+  - Decision: keep full app tiers as `free`, `intermediate`, `pro`, `enterprise`.
+  - RevenueCat should only sell the self-serve paid tiers: `intermediate` and `pro`.
+  - `free` is the fallback when no active entitlement exists.
+  - `enterprise` is a manual/custom tier, not a RevenueCat product initially.
 - [ ] Decide exact iOS product IDs.
 - [ ] Decide exact Android product IDs.
 - [ ] Decide whether Expo first release keeps `/login` and `/register` in WebView.
@@ -1207,16 +1276,29 @@ WorkExperience:
 
 viel-chat-expo:
 
-- [ ] Add backend URL environment config if missing.
-- [ ] Add/confirm Supabase client configuration for mobile.
-- [ ] Add a small API/tRPC client layer for WorkExperience.
-- [ ] Confirm Expo can call a protected WorkExperience tRPC procedure with the Supabase access token.
-- [ ] Add a temporary/debug entitlement fetch during development if useful.
+- [x] Add backend URL environment config if missing.
+  - Added `EXPO_PUBLIC_WORKEXPERIENCE_API_URL`.
+  - Added `workExperienceApiUrl` to Expo `extra`.
+  - Development defaults to `http://localhost:3000`; preview/production default to `https://www.viel.chat`.
+- [x] Add/confirm Supabase client configuration for mobile.
+  - Added `EXPO_PUBLIC_SUPABASE_URL`.
+  - Added `EXPO_PUBLIC_SUPABASE_ANON_KEY`.
+  - Added a React Native Supabase client using AsyncStorage-backed session persistence.
+- [x] Add a small API/tRPC client layer for WorkExperience.
+  - Added a lightweight fetch-based `profile.getEntitlement` caller for `/api/trpc`.
+  - The client sends `Authorization: Bearer <supabase_access_token>`.
+- [x] Confirm Expo can call a protected WorkExperience tRPC procedure with the Supabase access token.
+  - Client wiring is in place.
+  - Added `/debug-login` to create a native Supabase session with a WorkExperience test user.
+  - Use `/debug-entitlement` after `/debug-login` to verify the protected `profile.getEntitlement` tRPC call.
+  - Confirmed response: `tier: free`, `entitlement: none`, `active: false`, `canPurchase: true`.
+- [x] Add a temporary/debug entitlement fetch during development if useful.
+  - Added `/debug-entitlement`, disabled in production.
 
 Exit criteria:
 
-- [ ] Expo can authenticate with Supabase and call WorkExperience protected tRPC.
-- [ ] Expo can fetch the same entitlement state as web.
+- [x] Expo can authenticate with Supabase and call WorkExperience protected tRPC.
+- [x] Expo can fetch the same entitlement state as web.
 
 ### Stage 4: RevenueCat Backend Integration
 

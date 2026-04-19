@@ -8,6 +8,7 @@ const androidVersionCode = Number.parseInt(process.env.ANDROID_VERSION_CODE ?? '
 const bundleIdentifier = process.env.EXPO_IOS_BUNDLE_IDENTIFIER ?? 'com.fschwall.vielchat';
 const androidPackage = process.env.EXPO_ANDROID_PACKAGE ?? 'com.fschwall.vielchat';
 const productionUrl = 'https://www.viel.chat/chat';
+const productionBackendUrl = 'https://www.viel.chat';
 
 const getDefaultUrl = () => {
   if (appEnv === 'production') {
@@ -22,6 +23,11 @@ const getDefaultUrl = () => {
 };
 
 const vielChatUrl = getDefaultUrl() ?? 'http://localhost:3000';
+const workExperienceApiUrl =
+  process.env.EXPO_PUBLIC_WORKEXPERIENCE_API_URL ??
+  (appEnv === 'production' || appEnv === 'preview'
+    ? productionBackendUrl
+    : 'http://localhost:3000');
 const extraAllowedHosts = (process.env.EXPO_PUBLIC_VIEL_CHAT_ALLOWED_HOSTS ?? '')
   .split(',')
   .map((value) => value.trim())
@@ -84,6 +90,9 @@ const config: ExpoConfig = {
     appEnv,
     vielChatUrl,
     vielChatAllowedHosts: extraAllowedHosts,
+    workExperienceApiUrl,
+    supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
     router: {},
     eas: {
       projectId: '1f018771-aca9-4b95-9c8f-a354586e4e6f',

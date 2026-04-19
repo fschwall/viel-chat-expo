@@ -6,6 +6,14 @@ export default function RootLayout() {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
+        <Stack.Screen
+          name="debug-entitlement"
+          options={{ headerShown: true, title: 'Entitlement Debug' }}
+        />
+        <Stack.Screen
+          name="debug-login"
+          options={{ headerShown: true, title: 'Debug Login' }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </>
