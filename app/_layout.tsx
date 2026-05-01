@@ -7,6 +7,10 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen
+          name="paywall/index"
+          options={{ headerShown: true, title: 'Upgrade' }}
+        />
+        <Stack.Screen
           name="debug-entitlement"
           options={{ headerShown: true, title: 'Entitlement Debug' }}
         />

@@ -259,6 +259,45 @@ Supabase auth user id = RevenueCat appUserID = Stripe customer metadata.user_id
 
 This is what allows a user to subscribe on one platform and access paid features everywhere.
 
+RevenueCat identity decision:
+
+```text
+RevenueCat appUserID must be the Supabase auth user.id.
+```
+
+Implementation rule:
+
+- The Expo app should only show purchase UI after the user is authenticated.
+- After Supabase login or session restore, Expo should call `Purchases.logIn(user.id)`.
+- Logged-in purchases should not use anonymous RevenueCat IDs.
+- The WorkExperience RevenueCat webhook should treat RevenueCat `app_user_id` as the Supabase `user_id`.
+- The WorkExperience entitlement rows should store `user_id = event.app_user_id`.
+
+Future Expo implementation location:
+
+```text
+lib/revenueCat.ts
+```
+
+Example:
+
+```ts
+import Purchases from 'react-native-purchases';
+import { supabase } from '@/lib/supabase';
+
+export async function identifyRevenueCatUser() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return;
+  }
+
+  await Purchases.logIn(user.id);
+}
+```
+
 ## Proposed Entitlement Model
 
 Add a provider-neutral subscription source table.
@@ -1318,7 +1357,10 @@ WorkExperience:
 viel-chat-expo:
 
 - [ ] No purchase UI required yet.
-- [ ] Confirm planned RevenueCat `appUserID` will be the Supabase user ID.
+- [x] Confirm planned RevenueCat `appUserID` will be the Supabase user ID.
+  - Decision: `RevenueCat appUserID = Supabase auth user.id`.
+  - Expo should call `Purchases.logIn(user.id)` after Supabase login/session restore.
+  - WorkExperience RevenueCat webhook should treat `event.app_user_id` as `user_id`.
 
 RevenueCat dashboard:
 

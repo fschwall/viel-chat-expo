@@ -13,6 +13,9 @@
     },
     "preview": {
       "distribution": "internal",
+      "android": {
+        "buildType": "app-bundle"
+      },
       "env": {
         "APP_ENV": "preview"
       }

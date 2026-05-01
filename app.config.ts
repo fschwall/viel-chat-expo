@@ -1,52 +1,57 @@
-import 'dotenv/config';
-import type { ExpoConfig } from 'expo/config';
+import "dotenv/config";
+import type { ExpoConfig } from "expo/config";
 
-const appEnv = process.env.APP_ENV ?? 'development';
-const appVersion = process.env.APP_VERSION ?? '1.0.0';
-const iosBuildNumber = process.env.IOS_BUILD_NUMBER ?? '1';
-const androidVersionCode = Number.parseInt(process.env.ANDROID_VERSION_CODE ?? '1', 10);
-const bundleIdentifier = process.env.EXPO_IOS_BUNDLE_IDENTIFIER ?? 'com.fschwall.vielchat';
-const androidPackage = process.env.EXPO_ANDROID_PACKAGE ?? 'com.fschwall.vielchat';
-const productionUrl = 'https://www.viel.chat/chat';
-const productionBackendUrl = 'https://www.viel.chat';
+const appEnv = process.env.APP_ENV ?? "development";
+const appVersion = process.env.APP_VERSION ?? "1.0.0";
+const iosBuildNumber = process.env.IOS_BUILD_NUMBER ?? "1";
+const androidVersionCode = Number.parseInt(
+  process.env.ANDROID_VERSION_CODE ?? "1",
+  10,
+);
+const bundleIdentifier =
+  process.env.EXPO_IOS_BUNDLE_IDENTIFIER ?? "chat.viel.app";
+const androidPackage = process.env.EXPO_ANDROID_PACKAGE ?? "chat.viel.app";
+const productionUrl = "https://www.viel.chat/chat";
+const productionBackendUrl = "https://www.viel.chat";
 
 const getDefaultUrl = () => {
-  if (appEnv === 'production') {
+  if (appEnv === "production") {
     return productionUrl;
   }
 
-  if (appEnv === 'preview') {
+  if (appEnv === "preview") {
     return productionUrl;
   }
 
   return process.env.EXPO_PUBLIC_VIEL_CHAT_URL;
 };
 
-const vielChatUrl = getDefaultUrl() ?? 'http://localhost:3000';
+const vielChatUrl = getDefaultUrl() ?? "http://localhost:3000";
 const workExperienceApiUrl =
   process.env.EXPO_PUBLIC_WORKEXPERIENCE_API_URL ??
-  (appEnv === 'production' || appEnv === 'preview'
+  (appEnv === "production" || appEnv === "preview"
     ? productionBackendUrl
-    : 'http://localhost:3000');
-const extraAllowedHosts = (process.env.EXPO_PUBLIC_VIEL_CHAT_ALLOWED_HOSTS ?? '')
-  .split(',')
+    : "http://localhost:3000");
+const extraAllowedHosts = (
+  process.env.EXPO_PUBLIC_VIEL_CHAT_ALLOWED_HOSTS ?? ""
+)
+  .split(",")
   .map((value) => value.trim())
   .filter(Boolean);
 
 const config: ExpoConfig = {
-  name: 'Viel Chat',
-  slug: 'viel-chat-expo',
+  name: "Viel Chat",
+  slug: "viel-chat-expo",
   version: appVersion,
-  orientation: 'portrait',
-  icon: './assets/images/icon.png',
-  scheme: 'vielchat',
-  userInterfaceStyle: 'automatic',
+  orientation: "portrait",
+  icon: "./assets/images/icon.png",
+  scheme: "vielchat",
+  userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
     supportsTablet: false,
     bundleIdentifier,
     buildNumber: iosBuildNumber,
-    associatedDomains: [],
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
@@ -55,29 +60,29 @@ const config: ExpoConfig = {
     package: androidPackage,
     versionCode: Number.isNaN(androidVersionCode) ? 1 : androidVersionCode,
     adaptiveIcon: {
-      backgroundColor: '#F8DDC4',
-      foregroundImage: './assets/images/android-icon-foreground.png',
-      backgroundImage: './assets/images/android-icon-background.png',
-      monochromeImage: './assets/images/android-icon-monochrome.png',
+      backgroundColor: "#F8DDC4",
+      foregroundImage: "./assets/images/android-icon-foreground.png",
+      backgroundImage: "./assets/images/android-icon-background.png",
+      monochromeImage: "./assets/images/android-icon-monochrome.png",
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
   },
   web: {
-    output: 'static',
-    favicon: './assets/images/favicon.png',
+    output: "static",
+    favicon: "./assets/images/favicon.png",
   },
   plugins: [
-    'expo-router',
+    "expo-router",
     [
-      'expo-splash-screen',
+      "expo-splash-screen",
       {
-        image: './assets/images/splash-icon.png',
+        image: "./assets/images/splash-icon.png",
         imageWidth: 220,
-        resizeMode: 'contain',
-        backgroundColor: '#F8DDC4',
+        resizeMode: "contain",
+        backgroundColor: "#F8DDC4",
         dark: {
-          backgroundColor: '#151515',
+          backgroundColor: "#151515",
         },
       },
     ],
@@ -95,10 +100,12 @@ const config: ExpoConfig = {
     supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
     router: {},
     eas: {
-      projectId: '1f018771-aca9-4b95-9c8f-a354586e4e6f',
+      projectId: "1f018771-aca9-4b95-9c8f-a354586e4e6f",
     },
+    revenueCatAndroidApiKey: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+    revenueCatIosApiKey: process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
   },
-  owner: 'fschwall',
+  owner: "fschwall",
 };
 
 export default config;

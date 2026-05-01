@@ -3,6 +3,8 @@ import { Platform } from 'react-native';
 
 export type AppExtraConfig = {
   appEnv?: string;
+  revenueCatAndroidApiKey?: string;
+  revenueCatIosApiKey?: string;
   supabaseAnonKey?: string;
   supabaseUrl?: string;
   vielChatAllowedHosts?: string[];
@@ -44,5 +46,12 @@ export const supabaseUrl =
 
 export const supabaseAnonKey =
   appExtra.supabaseAnonKey ?? process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+export const revenueCatApiKey =
+  Platform.OS === 'ios'
+    ? appExtra.revenueCatIosApiKey ?? process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
+    : Platform.OS === 'android'
+      ? appExtra.revenueCatAndroidApiKey ?? process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY
+      : undefined;
 
 export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
