@@ -12,7 +12,10 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import type { PurchasesPackage } from 'react-native-purchases';
 
-import { triggerEntitlementRefresh } from '@/lib/entitlementRefresh';
+import {
+  triggerEntitlementRefresh,
+  type EntitlementRefreshReason,
+} from '@/lib/entitlementRefresh';
 import {
   getCurrentOffering,
   purchaseRevenueCatPackage,
@@ -31,6 +34,8 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const iosManageSubscriptionsUrl = 'https://apps.apple.com/account/subscriptions';
 const androidManageSubscriptionsUrl =
   'https://play.google.com/store/account/subscriptions';
+const entitlementSyncTimeoutMessage =
+  'Purchase was submitted, but access did not refresh yet. Please tap Refresh or Restore purchases in a few seconds.';
 
 const inferPackageTier = (pkg: PurchasesPackage): 'intermediate' | 'pro' | null => {
   const haystack = [
@@ -128,9 +133,15 @@ export default function NativePaywallScreen() {
     }
   }, [manageSubscriptionType]);
 
-  const handleSuccess = useCallback(async () => {
-    await waitForEntitlementSync();
-    triggerEntitlementRefresh();
+  const handleSuccess = useCallback(async (reason: EntitlementRefreshReason) => {
+    const synced = await waitForEntitlementSync();
+    if (!synced) {
+      setPurchaseState('idle');
+      setError(entitlementSyncTimeoutMessage);
+      return;
+    }
+
+    triggerEntitlementRefresh({ reason });
     router.back();
   }, [router, waitForEntitlementSync]);
 
@@ -140,7 +151,7 @@ export default function NativePaywallScreen() {
 
     try {
       await purchaseRevenueCatPackage(pkg);
-      await handleSuccess();
+      await handleSuccess('purchase_completed');
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : 'Purchase failed.');
       setPurchaseState('idle');
@@ -153,7 +164,7 @@ export default function NativePaywallScreen() {
 
     try {
       await restoreRevenueCatPurchases();
-      await handleSuccess();
+      await handleSuccess('restore_completed');
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : 'Restore failed.');
       setPurchaseState('idle');

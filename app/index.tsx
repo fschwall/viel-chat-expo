@@ -6,7 +6,10 @@ import { useRouter } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 
-import { onEntitlementRefresh } from '@/lib/entitlementRefresh';
+import {
+  onEntitlementRefresh,
+  type EntitlementRefreshEvent,
+} from '@/lib/entitlementRefresh';
 import { syncRevenueCatUser } from '@/lib/revenueCat';
 import { supabase } from '@/lib/supabase';
 
@@ -61,15 +64,36 @@ export default function HomeScreen() {
   const [retryToken, setRetryToken] = useState(0);
   const webViewRef = useRef<WebView>(null);
 
-  const refreshWebEntitlement = useCallback(() => {
+  const refreshWebEntitlement = useCallback((refreshEvent: EntitlementRefreshEvent) => {
+    const completionEventName =
+      refreshEvent.reason === 'purchase_completed'
+        ? 'revenuecat_purchase_completed'
+        : refreshEvent.reason === 'restore_completed'
+          ? 'revenuecat_restore_completed'
+          : null;
+
     const script = `
       (function () {
         try {
+          const completionEventName = ${JSON.stringify(completionEventName)};
+          if (completionEventName) {
+            window.dispatchEvent(new CustomEvent(completionEventName, {
+              detail: { source: 'expo', reason: ${JSON.stringify(refreshEvent.reason)} }
+            }));
+          }
+
           window.dispatchEvent(new CustomEvent('nativeEntitlementUpdated', {
-            detail: { source: 'expo' }
+            detail: { source: 'expo', reason: ${JSON.stringify(refreshEvent.reason)} }
           }));
+
           if (window.__VIEL_CHAT__ && typeof window.__VIEL_CHAT__.refreshEntitlement === 'function') {
             window.__VIEL_CHAT__.refreshEntitlement();
+          }
+          if (window.__VIEL_CHAT__ && typeof window.__VIEL_CHAT__.refreshSubscription === 'function') {
+            window.__VIEL_CHAT__.refreshSubscription();
+          }
+          if (window.__VIEL_CHAT__ && typeof window.__VIEL_CHAT__.refreshUsage === 'function') {
+            window.__VIEL_CHAT__.refreshUsage();
           }
         } catch (error) {}
         true;
@@ -121,7 +145,10 @@ export default function HomeScreen() {
     };
   }, []);
 
-  useEffect(() => onEntitlementRefresh(refreshWebEntitlement), [refreshWebEntitlement]);
+  useEffect(
+    () => onEntitlementRefresh(refreshWebEntitlement),
+    [refreshWebEntitlement],
+  );
 
   const handleShouldStartLoad = (request: ShouldStartLoadRequest) => {
     if (!request.url) {
